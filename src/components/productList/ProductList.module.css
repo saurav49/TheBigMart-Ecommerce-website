@@ -1,0 +1,8 @@
+.productList {
+  display: flex;
+  flex-wrap: wrap;
+}
+h1 {
+  padding: 1em;
+  text-transform: uppercase;
+}
