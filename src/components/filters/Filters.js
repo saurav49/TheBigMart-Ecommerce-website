@@ -15,6 +15,16 @@ const Filters = () => {
     <>
       <div className={styles.filterContainer}>
         <button onClick={() => setShowFilters((showFilters) => !showFilters)}>
+          <p
+            style={{
+              textTransform: "uppercase",
+              fontWeight: "600",
+              fontSize: "16px",
+              margin: "1em 1em 0em 1em"
+            }}
+          >
+            Filters
+          </p>
           <BsFilter className={styles.filterIcon} />
         </button>
       </div>

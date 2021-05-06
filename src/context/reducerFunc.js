@@ -46,11 +46,7 @@ export const reducerFunc = (state, action) => {
         ...state,
         cartList: [
           ...state.cartList,
-          {
-            ...action.payload,
-            quantity: 1,
-            isInCartList: true
-          }
+          { ...action.payload, quantity: 1, isInCartList: true }
         ],
         productList: state.productList.map((product) =>
           product.productId === action.productId
@@ -77,7 +73,17 @@ export const reducerFunc = (state, action) => {
         ...state,
         cartList: state.cartList.map((product) =>
           product.productId === action.productId
-            ? { ...product, quantity: action.payload }
+            ? {
+                ...product,
+                quantity: action.payload,
+                price: updatePrice(
+                  state.productList,
+                  state.cartList,
+                  action.productId,
+                  action.updateType,
+                  action.payload
+                )
+              }
             : { ...product }
         )
       };
@@ -159,22 +165,76 @@ const updateProductsWithWishListAndCartStatus = (
   return productList;
 };
 
-// const updateProductWithQuantity = ({ cartList, productId, updateType }) => {
-//   for (const product of cartList) {
-//     if (product.productId === productId) {
-//       if (product.isInCartList) {
-//         return updateType === "INCREMENT"
-//           ? product.quantity + 1
-//           : product.quantity - 1;
-//       } else {
-//         return 0;
-//       }
-//     }
-//   }
-// };
+const updatePrice = (
+  productList,
+  cartList,
+  productId,
+  updateType,
+  quantity
+) => {
+  return updateType === "INCREMENT"
+    ? cartList.filter((product) => product.productId === productId)[0].price *
+        quantity
+    : cartList.filter((product) => product.productId === productId)[0].price -
+        productList.filter((product) => product.productId === productId)[0]
+          .price;
+};
 
-// return product.isInCartList
-// ? updateType === "INCREMENT"
-//   ? product.quantity + 1
-//   : product.quantity - 1
-// : 1;
+const removeDuplicateProductFromCart = (cartList, productToBeAdded) => {
+  const { productId } = productToBeAdded;
+
+  let newCartList = [
+    ...cartList,
+    { ...productToBeAdded, quantity: 1, isInCartList: true }
+  ];
+
+  console.log("HELLO_DING_DONG", { newCartList });
+
+  if (newCartList.length > 0) {
+    newCartList = cartList.map((product) => {
+      if (productId === product["productId"]) {
+        return {
+          ...product,
+          quantity: product["quantity"] + 1,
+          isInCartList: true
+        };
+      } else {
+        return {
+          ...product
+        };
+      }
+    });
+  }
+
+  console.log("new_CART_LIST", newCartList);
+  return newCartList;
+};
+
+// if (cartList.length === 0) {
+//   newCartList.push({ ...productToBeAdded, quantity: 1, isInCartList: true });
+
+//   console.log("ie_IFnsid", { newCartList });
+// } else {
+//   cartList.forEach((product) => {
+//     if (productId === product["productId"]) {
+//       console.log("inside_IF", { product }, { newCartList });
+
+//       newCartList.push({
+//         ...product,
+//         qunatity: product["product"] + 1,
+//         isInCartList: true
+//       });
+//     } else {
+//       console.log("inside_ELSE", { product }, { newCartList });
+
+//       newCartList.push({
+//         ...productToBeAdded,
+//         quantity: 1,
+//         isInCartList: true
+//       });
+//     }
+//   });
+// }
+
+// console.log("NEW_CART_LIST", { newCartList });
+// return newCartList;

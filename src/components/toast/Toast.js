@@ -1,10 +1,18 @@
 import React from "react";
+import { FaCheckCircle } from "react-icons/fa";
+import { BsFillInfoCircleFill } from "react-icons/bs";
 
-const Toast = () => {
+const Toast = ({ message, type }) => {
+  const ICON = type === "success" ? FaCheckCircle : BsFillInfoCircleFill;
   return (
-    <div>
-      <h1> THIS IS A TOAST </h1>
-    </div>
+    <>
+      <div className={`alert alert-${type}`}>
+        <p>
+          <ICON />
+        </p>
+        <p>{message}</p>
+      </div>
+    </>
   );
 };
 

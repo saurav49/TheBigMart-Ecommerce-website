@@ -1,6 +1,5 @@
 import React from "react";
 import { useDataContext } from "../../context/useDataContext";
-import { ProductCard } from "../productList/ProductCard";
 import { Checkout } from "./Checkout";
 import { CartCard } from "./CartCard";
 

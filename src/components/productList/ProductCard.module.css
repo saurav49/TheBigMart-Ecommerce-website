@@ -1,19 +1,62 @@
 .productCard {
-  max-width: 265px;
+  width: 265px;
   margin: 2em;
   position: relative;
+}
+
+.productCard:hover {
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 .productDesc {
   padding: 0.5em;
 }
 
-.productDesc > * {
-  padding: 0.3em 0em;
+.productDescOutOfStock {
+  padding: 0.5em;
+  opacity: 0.3;
 }
 
+.productDescOutOfStock > * {
+  padding: 0.35em;
+}
+
+.productDesc > * {
+  padding: 0.35em;
+}
+
+/* image-style */
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+}
+
+.imageContainerOutOfStock {
+  position: relative;
+  width: 100%;
+  opacity: 0.3;
+}
+
+.imageOverlay {
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  text-align: center;
+}
+
+.imageOverlayDiv {
+  background-color: rgb(252, 92, 92);
+  padding: 1em;
+  border: 1px solid rgb(252, 92, 92);
+  border-radius: 0.2em;
+  box-shadow: 0px 4px 8px rgba(252, 92, 92, 0.4);
+}
+
+/* ALL BUTTONS HAVE Z-INDEX 2 */
+
 .btn {
-  width: 80%;
+  width: 100%;
   margin: 0em;
   font-size: 0.95rem;
   padding: 1em 0.5em;
@@ -28,6 +71,7 @@
   display: flex;
   justify-content: space-evenly;
   align-items: center;
+  z-index: 2;
 }
 
 .btn:hover {
@@ -71,6 +115,7 @@
   padding: 0.6em 0.4em;
   background-color: rgb(207, 207, 207);
   outline: none;
+  z-index: 2;
 }
 
 .btn_wish:hover {

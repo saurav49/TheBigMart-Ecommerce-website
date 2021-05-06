@@ -4,6 +4,7 @@ import { FaMinus } from "react-icons/fa";
 import { RiDeleteBin5Fill } from "react-icons/ri";
 import styles from "./CartCard.module.css";
 import { useDataContext } from "../../context/useDataContext";
+import { Toast } from "../toast/Toast";
 
 const CartCard = ({
   index,
@@ -18,32 +19,39 @@ const CartCard = ({
   offer
 }) => {
   const {
-    state: { cartList },
+    state,
     updateCartQuantity,
-    removeProductFromDb
+    removeProductFromDb,
+    isLoading
   } = useDataContext();
+
+  const productToBeAdded = state.productList.filter(
+    (product) => product.productId === productId
+  )[0];
 
   const handleCartQuantity = ({ type }) => {
     switch (type) {
       case "INCREMENT":
         updateCartQuantity({
           url: `/api/cartLists`,
-          listType: "cartList",
           dispatchType: "UPDATE_PRODUCT_QUANTITY_IN_CART",
           productId: productId,
           productIndex: index,
-          updateType: "INCREMENT"
+          updateType: "INCREMENT",
+          toastMsg: `${productToBeAdded.name} QUANTITY HAS BEEN INCREASES`,
+          toastType: "success"
         });
         break;
 
       case "DECREMENT":
         updateCartQuantity({
           url: `/api/cartLists`,
-          listType: "cartList",
           dispatchType: "UPDATE_PRODUCT_QUANTITY_IN_CART",
           productId: productId,
           productIndex: index,
-          updateType: "DECREMENT"
+          updateType: "DECREMENT",
+          toastMsg: `${productToBeAdded.name} QUANTITY HAS BEEN DECREASED`,
+          toastType: "success"
         });
         break;
 
@@ -53,7 +61,9 @@ const CartCard = ({
           listType: "cartList",
           dispatchType: `REMOVE_PRODUCT_FROM_CART`,
           productId: productId,
-          productIndex: index
+          productIndex: index,
+          toastMsg: `${productToBeAdded.name} HAS BEEN REMOVED`,
+          toastType: "error"
         });
         break;
 
@@ -64,21 +74,20 @@ const CartCard = ({
 
   return (
     <div className={styles.cartCardContainer}>
-      <img
-        style={{
-          height: "200px",
-          paddingRight: "1em"
-        }}
-        src={image}
-        alt={productId}
-      />
+      <div style={{ width: "300px" }}>
+        <img
+          style={{ width: "100%", backgroundSize: "cover" }}
+          src={image}
+          alt={productId}
+        />
+      </div>
       <div className={styles.cartContentContainer}>
         <h3> {name} </h3>
 
         <div style={{ display: "flex", alignItems: "center" }}>
           <h3 style={{ padding: "0em 1em 0em 0em" }}> ₹ {price} </h3>
 
-          {cartList.find((product) => product.productId === productId)[
+          {state.cartList.find((product) => product.productId === productId)[
             "quantity"
           ] === 1 ? (
             <button
@@ -98,7 +107,7 @@ const CartCard = ({
 
           <span>
             {
-              cartList.find((product) => product.productId === productId)[
+              state.cartList.find((product) => product.productId === productId)[
                 "quantity"
               ]
             }
@@ -111,6 +120,9 @@ const CartCard = ({
           </button>
         </div>
       </div>
+      {isLoading && (
+        <Toast message={state.toast.toastMsg} type={state.toast.toastType} />
+      )}
     </div>
   );
 };

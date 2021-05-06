@@ -2,11 +2,16 @@ import React from "react";
 import { ImCancelCircle } from "react-icons/im";
 import { useDataContext } from "../../context/useDataContext";
 import styles from "./ProductCard.module.css";
+import { Toast } from "../toast/Toast";
 
-const CancelButton = ({ productId, index, stateType }) => {
-  const { removeProductFromDb } = useDataContext();
+const CancelButton = ({ productId, stateType }) => {
+  const { state, removeProductFromDb, isLoading } = useDataContext();
 
   const type = stateType === "cartList" ? "CART" : "WISHLIST";
+
+  const productToBeRemoved = state.productList.filter(
+    (product) => product.productId === productId
+  )[0];
 
   const handleCancelBtn = () => {
     removeProductFromDb({
@@ -14,7 +19,8 @@ const CancelButton = ({ productId, index, stateType }) => {
       listType: stateType,
       dispatchType: `REMOVE_PRODUCT_FROM_${type}`,
       productId: productId,
-      productIndex: index
+      toastMsg: `${productToBeRemoved.name} HAS BEEN REMOVED`,
+      toastType: "error"
     });
   };
 
@@ -23,6 +29,9 @@ const CancelButton = ({ productId, index, stateType }) => {
       <button onClick={handleCancelBtn} className={styles.btn_wish}>
         <ImCancelCircle style={{ fontSize: "1.3rem" }} />
       </button>
+      {isLoading && (
+        <Toast message={state.toast.toastMsg} type={state.toast.toastType} />
+      )}
     </>
   );
 };

@@ -3,13 +3,15 @@ import { FaShoppingBag } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 import styles from "./ProductCard.module.css";
 import { useDataContext } from "../../context/useDataContext";
+import { Toast } from "../toast/Toast";
 
-const AddToCartButton = ({ productId, index }) => {
+const AddToCartButton = ({ productId, inStock }) => {
   const {
     state,
     dispatch,
     addProductToDb,
-    updateCartQuantity
+    updateCartQuantity,
+    isLoading
   } = useDataContext();
 
   // To check whether item is in cartList
@@ -19,8 +21,13 @@ const AddToCartButton = ({ productId, index }) => {
     );
   };
 
+  // Extract product from the product list
+  const productToBeAdded = state.productList.filter(
+    (product) => product.productId === productId
+  )[0];
+
   const handleAddToCart = () => {
-    state.productList[index].isInCartList
+    productToBeAdded.isInCartList
       ? dispatch({ type: "DISPLAY_COMPONENT", payload: "CART" })
       : checkIsInCartList(state.cartList, productId)
       ? updateCartQuantity({
@@ -28,33 +35,40 @@ const AddToCartButton = ({ productId, index }) => {
           listType: "cartList",
           dispatchType: "UPDATE_PRODUCT_QUANTITY_IN_CART",
           productId: productId,
-          productIndex: index,
-          updateType: "INCREMENT"
+          updateType: "INCREMENT",
+          toastMsg: `${productToBeAdded.name} HAS BEEN UPDATED`,
+          toastType: "info"
         })
       : addProductToDb({
           url: `/api/cartLists`,
           listType: "cartList",
           dispatchType: "ADD_PRODUCT_TO_CART",
           productId: productId,
-          productIndex: index
+          toastMsg: `${productToBeAdded.name} HAS BEEN ADDED TO CART`,
+          toastType: "success"
         });
   };
 
   return (
     <>
-      <button className={styles.btn} onClick={handleAddToCart}>
-        {state.productList[index].isInCartList ? (
-          <>
-            <span>GO TO CART</span>
-            <FaArrowRight className={styles.arrowIcon} />
-          </>
-        ) : (
-          <>
-            <FaShoppingBag className={styles.bagIcon} />
-            <span>ADD TO CART</span>
-          </>
-        )}
-      </button>
+      {inStock ? (
+        <button className={styles.btn} onClick={handleAddToCart}>
+          {productToBeAdded.isInCartList ? (
+            <>
+              <span>GO TO CART</span>
+              <FaArrowRight className={styles.arrowIcon} />
+            </>
+          ) : (
+            <>
+              <FaShoppingBag className={styles.bagIcon} />
+              <span>ADD TO CART</span>
+            </>
+          )}
+        </button>
+      ) : null}
+      {isLoading && (
+        <Toast message={state.toast.toastMsg} type={state.toast.toastType} />
+      )}
     </>
   );
 };
